@@ -9,6 +9,8 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import com.example.cameraxapplication.data.repository.CustomCameraRepoImpl
+import com.example.cameraxapplication.domain.repository.CustomCameraRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,7 +43,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideImageCapture(): ImageCapture{
+    fun provideImageCapture(): ImageCapture {
         return ImageCapture.Builder()
             .setFlashMode(FLASH_MODE_ON)
             .setTargetAspectRatio(AspectRatio.RATIO_16_9)
@@ -54,5 +56,23 @@ object AppModule {
         return ImageAnalysis.Builder()
             .setBackpressureStrategy(STRATEGY_KEEP_ONLY_LATEST)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCustomCameraRepo(
+        cameraProvider: ProcessCameraProvider,
+        selector: CameraSelector,
+        preview: Preview,
+        imageAnalysis: ImageAnalysis,
+        imageCapture: ImageCapture,
+    ): CustomCameraRepo {
+        return CustomCameraRepoImpl(
+            cameraProvider,
+            selector,
+            preview,
+            imageAnalysis,
+            imageCapture
+        )
     }
 }
